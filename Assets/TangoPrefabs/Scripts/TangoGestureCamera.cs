@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using Tango;
 
 /// <summary>
@@ -57,10 +58,27 @@ public class TangoGestureCamera : MonoBehaviour
     private Vector2 topDownStartPos = Vector2.zero;
     private Vector3 thirdPersonCamStartOffset;
 
-	// The tango pose date is changing my origin position and rotation so recording offset and applying back
-	private Vector3 offset; // To take into account camera offset from Pose
-	private Vector3 originPos = new Vector3(0.0f, 0.0f, 0.0f); // used to calculate initial offet
-	private Quaternion rotateOffset;
+	// Score, Lives, and Time.
+	public int lives = 0;
+	public Text liveText;
+	public Text winMessage;
+
+	// Scale Movement
+	public float m_movementScale = 1.0f;
+	
+	// Determine if Toad is hit by a vehicle
+	void OnTriggerEnter (Collider other) {
+		if (other.gameObject.CompareTag ("Vehicle")) {
+			lives = lives - 1;
+			setLives ();
+			winMessage.text = "SMASH";
+		}
+	}
+
+	void OnTriggerExit (Collider other) {
+		winMessage.text = "";
+	}
+
 
     /// <summary>
     /// Enabled based on camera type.
@@ -72,8 +90,8 @@ public class TangoGestureCamera : MonoBehaviour
         {
             case CameraType.FIRST_PERSON:
             {
-     			transform.position = m_targetFollowingObject.transform.position;
-                transform.rotation = m_targetFollowingObject.transform.rotation;
+     			transform.localPosition = m_targetFollowingObject.transform.position;
+                transform.localRotation = m_targetFollowingObject.transform.rotation;
                 break;
             }
             case CameraType.THIRD_PERSON:
@@ -109,17 +127,32 @@ public class TangoGestureCamera : MonoBehaviour
     private void Start() 
     {
         Application.targetFrameRate = 60;
+		setLives ();
 		EnableCamera(m_defaultCameraMode);
     }
 
-    /// <summary>
+	private void setLives() {
+		liveText.text = "Lives: " + lives.ToString("D4");
+	}
+		
+		/// <summary>
     /// Updates, take touching event.
     /// </summary>
     private void LateUpdate()
     {
         if (m_currentCamera == CameraType.FIRST_PERSON)
         {
-			transform.localPosition = m_targetFollowingObject.transform.position; 
+			// Get the pose position (x, y, and z)
+			float poseX = m_targetFollowingObject.transform.position.x;
+			float poseY = m_targetFollowingObject.transform.position.y;
+			float poseZ = m_targetFollowingObject.transform.position.z;
+			
+			// Create a vector based on pose X and Z (we don't want player going up and down) 
+			// Multiply by multiplier, this is because in small room not enough space to move.
+			Vector3 posePosition = new Vector3 (poseX * m_movementScale, poseY * m_movementScale, poseZ * m_movementScale);
+
+//			transform.localPosition = m_targetFollowingObject.transform.position; 
+			transform.localPosition = posePosition;
 			transform.localRotation = m_targetFollowingObject.transform.rotation; 
         }
 

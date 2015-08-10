@@ -48,6 +48,9 @@
   <ItemGroup>
      <Compile Include="Assets\Google-Unity\Scripts\AndroidHelper.cs" />
      <Compile Include="Assets\Google-Unity\Scripts\AndroidLifecycle.cs" />
+     <Compile Include="Assets\Scripts\CountDownTimer.cs" />
+     <Compile Include="Assets\Scripts\StoreData.cs" />
+     <Compile Include="Assets\Scripts\ToadCollider.cs" />
      <Compile Include="Assets\TangoPrefabs\Scripts\TangoGestureCamera.cs" />
      <Compile Include="Assets\TangoPrefabs\Scripts\TangoPointCloud.cs" />
      <Compile Include="Assets\TangoPrefabs\Scripts\TangoPoseController.cs" />
@@ -78,7 +81,6 @@
      <Compile Include="Assets\TangoSDK\TangoUX\Scripts\Interfaces\ITangoUX.cs" />
      <Compile Include="Assets\TangoSDK\TangoUX\Scripts\Listeners\UxExceptionEventListener.cs" />
      <Compile Include="Assets\TangoSDK\TangoUX\Scripts\TangoUx.cs" />
-     <Compile Include="Assets\ToadCollider.cs" />
      <Compile Include="Assets\Traffic System\Scripts\FPSCounter.cs" />
      <Compile Include="Assets\Traffic System\Scripts\GameUtils.cs" />
      <Compile Include="Assets\Traffic System\Scripts\TrafficSystem.cs" />
