@@ -59,25 +59,39 @@ public class TangoGestureCamera : MonoBehaviour
     private Vector3 thirdPersonCamStartOffset;
 
 	// Score, Lives, and Time.
-	public int lives = 0;
-	public Text liveText;
-	public Text winMessage;
+//	public Text winMessage;
 
 	// Scale Movement
 	public float m_movementScale = 1.0f;
-	
+	public float minHeight = 0.5f;
+	public float maxHeight = 1.3f;
+
+	// Red Flash on Crash
+	public GameObject redFlash;
+
+	// Game Managers
+	private GameObject startDataObj;
+	public GameObject persistData;
+
 	// Determine if Toad is hit by a vehicle
 	void OnTriggerEnter (Collider other) {
 		if (other.gameObject.CompareTag ("Vehicle")) {
-			lives = lives - 1;
-			setLives ();
-			winMessage.text = "SMASH";
+			//winMessage.text = "SMASH";
+			// Update Life Counter
+			persistData.GetComponent<StoreData>().loseLife();
+			// Flash screen red
+			redFlash.GetComponent<RedMist>().FlashWhenHit();
+			// Plash smash sound (croak)
+			GetComponent<AudioSource>().Play();
+			// Check if game over
+
 		}
 	}
 
-	void OnTriggerExit (Collider other) {
-		winMessage.text = "";
-	}
+//	void OnTriggerExit (Collider other) {
+//		if (other.gameObject.CompareTag ("Vehicle")) 
+//			winMessage.text = "";
+//	}
 
 
     /// <summary>
@@ -127,14 +141,11 @@ public class TangoGestureCamera : MonoBehaviour
     private void Start() 
     {
         Application.targetFrameRate = 60;
-		setLives ();
 		EnableCamera(m_defaultCameraMode);
+		startDataObj = GameObject.FindWithTag("StartData");
+		m_movementScale = startDataObj.GetComponent<HoldData>().multiplier;
     }
-
-	private void setLives() {
-		liveText.text = "Lives: " + lives.ToString("D4");
-	}
-		
+			
 		/// <summary>
     /// Updates, take touching event.
     /// </summary>
@@ -146,10 +157,17 @@ public class TangoGestureCamera : MonoBehaviour
 			float poseX = m_targetFollowingObject.transform.position.x;
 			float poseY = m_targetFollowingObject.transform.position.y;
 			float poseZ = m_targetFollowingObject.transform.position.z;
-			
+
+			// Stop player going underground
+			if (poseY < minHeight)
+				poseY = minHeight;
+			// Don't allow players to jump cars - need to change this for water levels with jumping
+			if (poseY > maxHeight)
+				poseY = maxHeight;
+
 			// Create a vector based on pose X and Z (we don't want player going up and down) 
 			// Multiply by multiplier, this is because in small room not enough space to move.
-			Vector3 posePosition = new Vector3 (poseX * m_movementScale, poseY * m_movementScale, poseZ * m_movementScale);
+			Vector3 posePosition = new Vector3 (poseX * m_movementScale, poseY, poseZ * m_movementScale);
 
 //			transform.localPosition = m_targetFollowingObject.transform.position; 
 			transform.localPosition = posePosition;

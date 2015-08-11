@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI; 
 
 public class TrafficSystemVehicleSpawner : MonoBehaviour 
 {
+	public Text winText;
 	public  List<TrafficSystemVehicle> m_vehiclePrefabs      = new List<TrafficSystemVehicle>();
 	
 	[Range(0.0f, 1.0f)]
@@ -47,6 +49,7 @@ public class TrafficSystemVehicleSpawner : MonoBehaviour
 
 	IEnumerator Start () 
 	{
+//		winText.text = "Spawner Started";
 		if(TrafficSystem.Instance)
 			TrafficSystem.Instance.RegisterVehicleSpawner( this );
 
@@ -96,7 +99,7 @@ public class TrafficSystemVehicleSpawner : MonoBehaviour
 	{
 		StartCoroutine( ProcessSpawnOnDeath() );
 	}
-
+	
 	IEnumerator ProcessSpawnOnDeath()
 	{
 		bool hasSpawned = false;
